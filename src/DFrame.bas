@@ -1,13 +1,13 @@
-Attribute VB_Name = "DF"
+Attribute VB_Name = "DFrame"
 Option Explicit
 
 ' ============================================================
-'  DF  -  Factory functions for DataFrame
+'  DFrame  -  Factory functions for DataFrame
 ' ============================================================
 '  Usage:
 '    Dim df As DataFrame
-'    Set df = DF.FromRange(Sheet1.Range("A1:D100"))
-'    Set df = DF.Create(Array("Name","Age"), Array("Taro",30), Array("Hanako",25))
+'    Set df = DFrame.FromRange(Sheet1.Range("A1:D100"))
+'    Set df = DFrame.Create(Array("Name","Age"), Array("Taro",30), Array("Hanako",25))
 ' ============================================================
 
 ' Create DataFrame from an Excel Range
@@ -69,7 +69,7 @@ End Function
 ' Create DataFrame from inline data
 ' First argument: Array of column names
 ' Remaining arguments: each is an Array representing one row
-'   Example: DF.Create(Array("A","B"), Array(1,2), Array(3,4))
+'   Example: DFrame.Create(Array("A","B"), Array(1,2), Array(3,4))
 Public Function Create(ByVal colNames As Variant, ParamArray rows() As Variant) As DataFrame
     Dim df As New DataFrame
     Dim nCols As Long: nCols = UBound(colNames) - LBound(colNames) + 1

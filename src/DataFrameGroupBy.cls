@@ -38,6 +38,8 @@ Public Sub Init(ByRef src As DataFrame, ByRef cols As Variant)
 
     Dim r As Long, key As String, j As Long
     Dim keyVals() As Variant
+    Dim c As Collection
+    Dim arr As Variant
     pGroupCount = 0
 
     For r = 1 To pSource.RowCount
@@ -49,10 +51,10 @@ Public Sub Init(ByRef src As DataFrame, ByRef cols As Variant)
         Next j
         If Not pGroups.Exists(key) Then
             pGroupCount = pGroupCount + 1
-            Dim c As New Collection
+            Set c = New Collection
             pGroups.Add key, Array(keyVals, c)
         End If
-        Dim arr As Variant: arr = pGroups(key)
+        arr = pGroups(key)
         arr(1).Add r
         pGroups(key) = arr   ' reassign since array is copied
     Next r
@@ -66,12 +68,14 @@ Public Property Get GroupCount() As Long: GroupCount = pGroupCount: End Property
 
 ' Sum of specified columns per group
 Public Function Sum(ParamArray cols() As Variant) As DataFrame
-    Sum = Aggregate("Sum", cols)
+    Dim a As Variant: a = cols
+    Set Sum = Aggregate("Sum", a)
 End Function
 
 ' Mean of specified columns per group
 Public Function Mean(ParamArray cols() As Variant) As DataFrame
-    Mean = Aggregate("Mean", cols)
+    Dim a As Variant: a = cols
+    Set Mean = Aggregate("Mean", a)
 End Function
 
 ' Count per group
@@ -82,12 +86,14 @@ End Function
 
 ' Max of specified columns per group
 Public Function MaxVal(ParamArray cols() As Variant) As DataFrame
-    Set MaxVal = Aggregate("Max", cols)
+    Dim a As Variant: a = cols
+    Set MaxVal = Aggregate("Max", a)
 End Function
 
 ' Min of specified columns per group
 Public Function MinVal(ParamArray cols() As Variant) As DataFrame
-    Set MinVal = Aggregate("Min", cols)
+    Dim a As Variant: a = cols
+    Set MinVal = Aggregate("Min", a)
 End Function
 
 ' ============================================================

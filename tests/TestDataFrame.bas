@@ -56,7 +56,7 @@ End Sub
 Sub Test_Create()
     Debug.Print ">> Test_Create"
     Dim df As DataFrame
-    Set df = DF.Create( _
+    Set df = DFrame.Create( _
         Array("A", "B", "C"), _
         Array(1, "x", True), _
         Array(2, "y", False))
@@ -73,7 +73,7 @@ Sub Test_FromArray()
     data(2, 1) = 20: data(2, 2) = "b"
     data(3, 1) = 30: data(3, 2) = "c"
     Dim df As DataFrame
-    Set df = DF.FromArray(data, Array("Num", "Letter"))
+    Set df = DFrame.FromArray(data, Array("Num", "Letter"))
     Assert "FromArray.RowCount", df.RowCount = 3
     Assert "FromArray.Value(3,Num)", df.Value(3, "Num") = 30
 End Sub
@@ -81,7 +81,7 @@ End Sub
 Sub Test_Properties()
     Debug.Print ">> Test_Properties"
     Dim df As DataFrame
-    Set df = DF.Create(Array("X", "Y"), Array(1, 2), Array(3, 4), Array(5, 6))
+    Set df = DFrame.Create(Array("X", "Y"), Array(1, 2), Array(3, 4), Array(5, 6))
     Assert "Shape", df.Shape = "3 rows x 2 cols"
     
     Dim cols As Variant: cols = df.Columns
@@ -100,7 +100,7 @@ End Sub
 Sub Test_Head_Tail()
     Debug.Print ">> Test_Head_Tail"
     Dim df As DataFrame
-    Set df = DF.Create(Array("V"), Array(1), Array(2), Array(3), Array(4), Array(5))
+    Set df = DFrame.Create(Array("V"), Array(1), Array(2), Array(3), Array(4), Array(5))
     
     Dim h As DataFrame: Set h = df.Head(3)
     Assert "Head.RowCount", h.RowCount = 3
@@ -114,7 +114,7 @@ End Sub
 Sub Test_Sel()
     Debug.Print ">> Test_Sel"
     Dim df As DataFrame
-    Set df = DF.Create(Array("A", "B", "C"), Array(1, 2, 3), Array(4, 5, 6))
+    Set df = DFrame.Create(Array("A", "B", "C"), Array(1, 2, 3), Array(4, 5, 6))
     Dim s As DataFrame: Set s = df.Sel("C", "A")
     Assert "Sel.ColCount", s.ColCount = 2
     Dim cols As Variant: cols = s.Columns
@@ -126,7 +126,7 @@ End Sub
 Sub Test_Where()
     Debug.Print ">> Test_Where"
     Dim df As DataFrame
-    Set df = DF.Create(Array("N", "V"), _
+    Set df = DFrame.Create(Array("N", "V"), _
         Array("a", 10), Array("b", 20), Array("c", 30), Array("d", 5))
     
     Assert "Where.GT", df.Where("V", ">", 10).RowCount = 2
@@ -141,7 +141,7 @@ End Sub
 Sub Test_OrderBy()
     Debug.Print ">> Test_OrderBy"
     Dim df As DataFrame
-    Set df = DF.Create(Array("N", "V"), _
+    Set df = DFrame.Create(Array("N", "V"), _
         Array("c", 30), Array("a", 10), Array("b", 20))
     
     Dim asc_ As DataFrame: Set asc_ = df.OrderBy("V", True)
@@ -155,7 +155,7 @@ End Sub
 Sub Test_AddCol()
     Debug.Print ">> Test_AddCol"
     Dim df As DataFrame
-    Set df = DF.Create(Array("A"), Array(1), Array(2))
+    Set df = DFrame.Create(Array("A"), Array(1), Array(2))
     
     ' Scalar
     Dim df2 As DataFrame: Set df2 = df.AddCol("B", "x")
@@ -170,7 +170,7 @@ End Sub
 Sub Test_RemoveCol()
     Debug.Print ">> Test_RemoveCol"
     Dim df As DataFrame
-    Set df = DF.Create(Array("A", "B", "C"), Array(1, 2, 3))
+    Set df = DFrame.Create(Array("A", "B", "C"), Array(1, 2, 3))
     Dim df2 As DataFrame: Set df2 = df.RemoveCol("B")
     Assert "RemoveCol.ColCount", df2.ColCount = 2
     Dim cols As Variant: cols = df2.Columns
@@ -180,7 +180,7 @@ End Sub
 Sub Test_RenameCol()
     Debug.Print ">> Test_RenameCol"
     Dim df As DataFrame
-    Set df = DF.Create(Array("A", "B"), Array(1, 2))
+    Set df = DFrame.Create(Array("A", "B"), Array(1, 2))
     Dim df2 As DataFrame: Set df2 = df.RenameCol("A", "Alpha")
     Dim cols As Variant: cols = df2.Columns
     Assert "RenameCol", cols(1) = "Alpha"
@@ -190,7 +190,7 @@ End Sub
 Sub Test_Distinct()
     Debug.Print ">> Test_Distinct"
     Dim df As DataFrame
-    Set df = DF.Create(Array("A", "B"), _
+    Set df = DFrame.Create(Array("A", "B"), _
         Array(1, "x"), Array(2, "y"), Array(1, "x"), Array(3, "z"))
     Assert "Distinct.All", df.Distinct().RowCount = 3
     Assert "Distinct.Col", df.Distinct("A").RowCount = 3
@@ -199,7 +199,7 @@ End Sub
 Sub Test_Slice()
     Debug.Print ">> Test_Slice"
     Dim df As DataFrame
-    Set df = DF.Create(Array("V"), Array(10), Array(20), Array(30), Array(40))
+    Set df = DFrame.Create(Array("V"), Array(10), Array(20), Array(30), Array(40))
     Dim s As DataFrame: Set s = df.Slice(2, 3)
     Assert "Slice.RowCount", s.RowCount = 2
     Assert "Slice.First", s.Value(1, "V") = 20
@@ -209,7 +209,7 @@ End Sub
 Sub Test_Sum_Mean()
     Debug.Print ">> Test_Sum_Mean"
     Dim df As DataFrame
-    Set df = DF.Create(Array("V"), Array(10), Array(20), Array(30))
+    Set df = DFrame.Create(Array("V"), Array(10), Array(20), Array(30))
     Assert "Sum", df.Sum("V") = 60
     Assert "Mean", df.Mean("V") = 20
 End Sub
@@ -217,7 +217,7 @@ End Sub
 Sub Test_MinMax()
     Debug.Print ">> Test_MinMax"
     Dim df As DataFrame
-    Set df = DF.Create(Array("V"), Array(30), Array(10), Array(20))
+    Set df = DFrame.Create(Array("V"), Array(30), Array(10), Array(20))
     Assert "Max", df.MaxVal("V") = 30
     Assert "Min", df.MinVal("V") = 10
 End Sub
@@ -225,7 +225,7 @@ End Sub
 Sub Test_Describe()
     Debug.Print ">> Test_Describe"
     Dim df As DataFrame
-    Set df = DF.Create(Array("N", "V"), Array("a", 10), Array("b", 20), Array("c", 30))
+    Set df = DFrame.Create(Array("N", "V"), Array("a", 10), Array("b", 20), Array("c", 30))
     Dim desc As DataFrame: Set desc = df.Describe
     Assert "Describe.Rows", desc.RowCount = 5
     Assert "Describe.HasV", desc.Value(1, "V") = 3  ' Count = 3
@@ -234,7 +234,7 @@ End Sub
 Sub Test_GroupBy()
     Debug.Print ">> Test_GroupBy"
     Dim df As DataFrame
-    Set df = DF.Create(Array("G", "V"), _
+    Set df = DFrame.Create(Array("G", "V"), _
         Array("a", 10), Array("b", 20), Array("a", 30), Array("b", 40))
     
     Dim g As DataFrame: Set g = df.GroupBy("G").Sum("V")
@@ -254,9 +254,9 @@ End Sub
 Sub Test_Join()
     Debug.Print ">> Test_Join"
     Dim left_ As DataFrame
-    Set left_ = DF.Create(Array("K", "LV"), Array(1, "a"), Array(2, "b"), Array(3, "c"))
+    Set left_ = DFrame.Create(Array("K", "LV"), Array(1, "a"), Array(2, "b"), Array(3, "c"))
     Dim right_ As DataFrame
-    Set right_ = DF.Create(Array("K", "RV"), Array(1, "x"), Array(3, "z"))
+    Set right_ = DFrame.Create(Array("K", "RV"), Array(1, "x"), Array(3, "z"))
     
     Dim inner_ As DataFrame: Set inner_ = left_.JoinDF(right_, "K", "inner")
     Assert "Join.Inner.Rows", inner_.RowCount = 2
@@ -268,9 +268,9 @@ End Sub
 Sub Test_VStack()
     Debug.Print ">> Test_VStack"
     Dim df1 As DataFrame
-    Set df1 = DF.Create(Array("A", "B"), Array(1, 2))
+    Set df1 = DFrame.Create(Array("A", "B"), Array(1, 2))
     Dim df2 As DataFrame
-    Set df2 = DF.Create(Array("A", "B"), Array(3, 4), Array(5, 6))
+    Set df2 = DFrame.Create(Array("A", "B"), Array(3, 4), Array(5, 6))
     Dim merged As DataFrame: Set merged = df1.VStack(df2)
     Assert "VStack.Rows", merged.RowCount = 3
     Assert "VStack.Last", merged.Value(3, "A") = 5
@@ -278,7 +278,7 @@ End Sub
 
 Sub Test_EmptyDF()
     Debug.Print ">> Test_EmptyDF"
-    Dim df As DataFrame: Set df = DF.EmptyFrame(Array("A", "B"))
+    Dim df As DataFrame: Set df = DFrame.EmptyFrame(Array("A", "B"))
     Assert "Empty.Rows", df.RowCount = 0
     Assert "Empty.Cols", df.ColCount = 2
     

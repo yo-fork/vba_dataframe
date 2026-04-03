@@ -11,7 +11,7 @@ Option Explicit
 ' --- Example 1: Create from inline data ---
 Sub Example_Create()
     Dim df As DataFrame
-    Set df = DF.Create( _
+    Set df = DFrame.Create( _
         Array("Name", "Age", "City", "Sales"), _
         Array("Tanaka", 30, "Tokyo", 15000), _
         Array("Suzuki", 25, "Osaka", 8000), _
@@ -29,7 +29,7 @@ End Sub
 Sub Example_FromRange()
     ' Assumes Sheet1 has data with headers in A1:D10
     Dim df As DataFrame
-    Set df = DF.FromRange(Sheet1.Range("A1").CurrentRegion)
+    Set df = DFrame.FromRange(Sheet1.Range("A1").CurrentRegion)
     
     Debug.Print "=== From Range ==="
     df.Head(5).Print
@@ -38,7 +38,7 @@ End Sub
 ' --- Example 3: Filtering ---
 Sub Example_Filter()
     Dim df As DataFrame
-    Set df = DF.Create( _
+    Set df = DFrame.Create( _
         Array("Product", "Category", "Price", "Stock"), _
         Array("Apple", "Fruit", 150, 200), _
         Array("Banana", "Fruit", 100, 350), _
@@ -62,7 +62,7 @@ End Sub
 ' --- Example 4: Method chaining ---
 Sub Example_Chaining()
     Dim df As DataFrame
-    Set df = DF.Create( _
+    Set df = DFrame.Create( _
         Array("Name", "Dept", "Salary"), _
         Array("A", "Sales", 5000), _
         Array("B", "Dev", 7000), _
@@ -81,7 +81,7 @@ End Sub
 ' --- Example 5: GroupBy ---
 Sub Example_GroupBy()
     Dim df As DataFrame
-    Set df = DF.Create( _
+    Set df = DFrame.Create( _
         Array("Region", "Product", "Sales", "Quantity"), _
         Array("East", "A", 1000, 10), _
         Array("West", "A", 1500, 15), _
@@ -103,7 +103,7 @@ End Sub
 ' --- Example 6: Join ---
 Sub Example_Join()
     Dim orders As DataFrame
-    Set orders = DF.Create( _
+    Set orders = DFrame.Create( _
         Array("OrderID", "CustID", "Amount"), _
         Array(1, "C01", 5000), _
         Array(2, "C02", 3000), _
@@ -111,7 +111,7 @@ Sub Example_Join()
         Array(4, "C03", 2000))
     
     Dim customers As DataFrame
-    Set customers = DF.Create( _
+    Set customers = DFrame.Create( _
         Array("CustID", "Name", "City"), _
         Array("C01", "Tanaka", "Tokyo"), _
         Array("C02", "Suzuki", "Osaka"), _
@@ -127,7 +127,7 @@ End Sub
 ' --- Example 7: Describe ---
 Sub Example_Describe()
     Dim df As DataFrame
-    Set df = DF.Create( _
+    Set df = DFrame.Create( _
         Array("Name", "Score1", "Score2"), _
         Array("A", 80, 90), _
         Array("B", 65, 78), _
@@ -142,7 +142,7 @@ End Sub
 ' --- Example 8: Column operations ---
 Sub Example_ColumnOps()
     Dim df As DataFrame
-    Set df = DF.Create( _
+    Set df = DFrame.Create( _
         Array("Product", "Price", "Tax"), _
         Array("A", 1000, 100), _
         Array("B", 2000, 200), _
@@ -167,7 +167,7 @@ End Sub
 ' --- Example 9: Write to Range ---
 Sub Example_ToRange()
     Dim df As DataFrame
-    Set df = DF.Create( _
+    Set df = DFrame.Create( _
         Array("Name", "Score"), _
         Array("Tanaka", 85), _
         Array("Suzuki", 92))
