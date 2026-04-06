@@ -117,6 +117,17 @@ Public Function FromCsv(ByVal filePath As String, _
     content = Input$(LOF(fNum), fNum)
     Close #fNum
 
+    ' Strip BOM if present (UTF-8 BOM appears as Chr(&HFEFF) or 3-byte EF BB BF)
+    If Len(content) > 0 Then
+        If AscW(Left$(content, 1)) = &HFEFF Then
+            content = Mid$(content, 2)
+        ElseIf Len(content) >= 3 Then
+            If Mid$(content, 1, 3) = Chr$(&HEF) & Chr$(&HBB) & Chr$(&HBF) Then
+                content = Mid$(content, 4)
+            End If
+        End If
+    End If
+
     ' Split into lines (handle both CR+LF and LF)
     content = Replace(content, vbCr, "")
     lines = Split(content, vbLf)
@@ -165,18 +176,19 @@ Public Function FromCsv(ByVal filePath As String, _
     Dim data() As Variant: ReDim data(1 To nRows, 1 To colCount)
     Dim fields() As String
     Dim r As Long
+    Dim fVal As String
 
     For i = dataStart To lineCount - 1
         r = i - dataStart + 1
         fields = Split(lines(i), sep)
         For j = 0 To UBound(fields)
             If j + 1 <= colCount Then
-                Dim val As String: val = Trim$(fields(j))
+                fVal = Trim$(fields(j))
                 ' Try numeric conversion
-                If IsNumeric(val) And val <> "" Then
-                    data(r, j + 1) = CDbl(val)
+                If IsNumeric(fVal) And fVal <> "" Then
+                    data(r, j + 1) = CDbl(fVal)
                 Else
-                    data(r, j + 1) = val
+                    data(r, j + 1) = fVal
                 End If
             End If
         Next j

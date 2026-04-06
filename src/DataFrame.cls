@@ -543,9 +543,10 @@ Public Function MaxVal(ByVal colName As String) As Variant
     Dim ci As Long: ci = RCol(colName)
     Dim r As Long, mx As Variant: mx = Empty
     For r = 1 To pRC
-        If IsEmpty(mx) Then mx = pData(r, ci) _
-        ElseIf CmpV(pData(r, ci), mx) < 0 Then ' current < mx => skip
-        ElseIf CmpV(pData(r, ci), mx) > 0 Then mx = pData(r, ci)
+        If IsEmpty(mx) Then
+            mx = pData(r, ci)
+        ElseIf CmpV(pData(r, ci), mx) > 0 Then
+            mx = pData(r, ci)
         End If
     Next r
     MaxVal = mx
@@ -555,9 +556,10 @@ Public Function MinVal(ByVal colName As String) As Variant
     Dim ci As Long: ci = RCol(colName)
     Dim r As Long, mn As Variant: mn = Empty
     For r = 1 To pRC
-        If IsEmpty(mn) Then mn = pData(r, ci) _
-        ElseIf CmpV(pData(r, ci), mn) > 0 Then ' current > mn => skip
-        ElseIf CmpV(pData(r, ci), mn) < 0 Then mn = pData(r, ci)
+        If IsEmpty(mn) Then
+            mn = pData(r, ci)
+        ElseIf CmpV(pData(r, ci), mn) < 0 Then
+            mn = pData(r, ci)
         End If
     Next r
     MinVal = mn
