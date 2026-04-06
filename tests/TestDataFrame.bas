@@ -35,6 +35,8 @@ Sub TestAll()
     Test_GroupBy
     Test_Join
     Test_VStack
+    Test_Calc
+    Test_CalcCols
     Test_EmptyDF
     
     Debug.Print String$(50, "=")
@@ -285,4 +287,55 @@ Sub Test_EmptyDF()
     ' Operations on empty DF should not error
     Assert "Empty.Head", df.Head(5).RowCount = 0
     Assert "Empty.Where", df.Where("A", "=", 1).RowCount = 0
+End Sub
+
+Sub Test_Calc()
+    Debug.Print ">> Test_Calc"
+    Dim df As DataFrame
+    Set df = DFrame.Create(Array("P", "Q"), Array(100, 5), Array(200, 10), Array(300, 15))
+    
+    ' Scalar multiply
+    Dim df2 As DataFrame: Set df2 = df.Calc("P", "*", 1.1)
+    Assert "Calc.Mul", df2.Value(1, "P") = 110
+    Assert "Calc.Unchanged", df2.Value(1, "Q") = 5
+    
+    ' Scalar add
+    Dim df3 As DataFrame: Set df3 = df.Calc("P", "+", 50)
+    Assert "Calc.Add", df3.Value(2, "P") = 250
+    
+    ' Scalar divide
+    Dim df4 As DataFrame: Set df4 = df.Calc("Q", "/", 5)
+    Assert "Calc.Div", df4.Value(1, "Q") = 1
+    Assert "Calc.Div2", df4.Value(2, "Q") = 2
+    
+    ' Array element-wise
+    Dim df5 As DataFrame: Set df5 = df.Calc("P", "*", Array(2, 3, 4))
+    Assert "Calc.ArrMul1", df5.Value(1, "P") = 200
+    Assert "Calc.ArrMul2", df5.Value(2, "P") = 600
+    Assert "Calc.ArrMul3", df5.Value(3, "P") = 1200
+End Sub
+
+Sub Test_CalcCols()
+    Debug.Print ">> Test_CalcCols"
+    Dim df As DataFrame
+    Set df = DFrame.Create( _
+        Array("Price", "Qty", "Tax"), _
+        Array(100, 5, 10), _
+        Array(200, 3, 20))
+    
+    ' New column from two existing columns
+    Dim df2 As DataFrame: Set df2 = df.CalcCols("Total", "Price", "*", "Qty")
+    Assert "CalcCols.NewCol", df2.ColCount = 4
+    Assert "CalcCols.Val1", df2.Value(1, "Total") = 500
+    Assert "CalcCols.Val2", df2.Value(2, "Total") = 600
+    
+    ' Overwrite existing column
+    Dim df3 As DataFrame: Set df3 = df.CalcCols("Price", "Price", "+", "Tax")
+    Assert "CalcCols.Overwrite", df3.Value(1, "Price") = 110
+    Assert "CalcCols.Overwrite2", df3.Value(2, "Price") = 220
+    Assert "CalcCols.SameCols", df3.ColCount = 3
+    
+    ' Subtraction
+    Dim df4 As DataFrame: Set df4 = df.CalcCols("Net", "Price", "-", "Tax")
+    Assert "CalcCols.Sub", df4.Value(1, "Net") = 90
 End Sub

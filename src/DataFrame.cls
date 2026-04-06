@@ -422,6 +422,102 @@ Public Function RenameCol(ByVal oldName As String, ByVal newName As String) As D
     Set RenameCol = df
 End Function
 
+' Scalar arithmetic on a column: returns new DataFrame with modified column
+' value: scalar or 1-D array (element-wise)
+' op: "+", "-", "*", "/", "^", "Mod"
+' Example: df.Calc("Price", "*", 1.1)
+Public Function Calc(ByVal colName As String, ByVal op As String, ByVal Value As Variant) As DataFrame
+    Dim ci As Long: ci = RCol(colName)
+    Dim df As New DataFrame
+    If pRC = 0 Then df.Init Empty, pCols: Set Calc = df: Exit Function
+
+    Dim nd() As Variant: ReDim nd(1 To pRC, 1 To pCC)
+    Dim r As Long, c As Long
+    For r = 1 To pRC
+        For c = 1 To pCC: nd(r, c) = pData(r, c): Next c
+    Next r
+
+    If IsArray(Value) Then
+        ' Element-wise with array
+        For r = 1 To pRC
+            nd(r, ci) = ApplyOp(nd(r, ci), op, Value(LBound(Value) + r - 1))
+        Next r
+    Else
+        ' Scalar
+        For r = 1 To pRC
+            nd(r, ci) = ApplyOp(nd(r, ci), op, Value)
+        Next r
+    End If
+
+    df.Init nd, pCols
+    Set Calc = df
+End Function
+
+' Element-wise operation between two columns -> result in resultCol
+' resultCol can be an existing column name (overwrite) or a new column name (append)
+' Example: df.CalcCols("Total", "Price", "*", "Qty")
+Public Function CalcCols(ByVal resultCol As String, ByVal col1 As String, _
+                         ByVal op As String, ByVal col2 As String) As DataFrame
+    Dim ci1 As Long: ci1 = RCol(col1)
+    Dim ci2 As Long: ci2 = RCol(col2)
+    Dim i As Long
+
+    ' Determine result column position
+    Dim resIdx As Long, resCC As Long
+    Dim resCols() As String
+
+    If pCI.Exists(resultCol) Then
+        resIdx = pCI(resultCol)
+        resCC = pCC
+        ReDim resCols(1 To pCC)
+        For i = 1 To pCC: resCols(i) = pCols(i): Next i
+    Else
+        resIdx = pCC + 1
+        resCC = pCC + 1
+        ReDim resCols(1 To resCC)
+        For i = 1 To pCC: resCols(i) = pCols(i): Next i
+        resCols(resCC) = resultCol
+    End If
+
+    Dim df As New DataFrame
+    If pRC = 0 Then df.Init Empty, resCols: Set CalcCols = df: Exit Function
+
+    Dim nd() As Variant: ReDim nd(1 To pRC, 1 To resCC)
+    Dim r As Long, c As Long
+    For r = 1 To pRC
+        For c = 1 To pCC: nd(r, c) = pData(r, c): Next c
+        nd(r, resIdx) = ApplyOp(pData(r, ci1), op, pData(r, ci2))
+    Next r
+
+    df.Init nd, resCols
+    Set CalcCols = df
+End Function
+
+' Arithmetic helper
+Private Function ApplyOp(ByVal lhs As Variant, ByVal op As String, ByVal rhs As Variant) As Variant
+    ' Handle Empty / Null
+    If IsEmpty(lhs) Or IsNull(lhs) Or IsEmpty(rhs) Or IsNull(rhs) Then
+        ApplyOp = Empty: Exit Function
+    End If
+    ' Non-numeric: allow "+" as string concatenation
+    If Not IsNumeric(lhs) Or Not IsNumeric(rhs) Then
+        If op = "+" Then ApplyOp = CStr(lhs) & CStr(rhs) Else ApplyOp = Empty
+        Exit Function
+    End If
+
+    Dim l As Double: l = CDbl(lhs)
+    Dim r As Double: r = CDbl(rhs)
+    Select Case UCase$(op)
+        Case "+":   ApplyOp = l + r
+        Case "-":   ApplyOp = l - r
+        Case "*":   ApplyOp = l * r
+        Case "/":   If r <> 0 Then ApplyOp = l / r Else ApplyOp = Empty
+        Case "^":   ApplyOp = l ^ r
+        Case "MOD": ApplyOp = l - Int(l / r) * r
+        Case Else:  Err.Raise ERR_INVALID_OP, SRC, "Unknown operator: " & op
+    End Select
+End Function
+
 ' ============================================================
 '  Aggregation helpers (single column)
 ' ============================================================

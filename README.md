@@ -96,6 +96,35 @@ df.Where("Sales", ">", 10000) _
 | `.AddCol(name, values)` | 列追加（配列 or スカラー）|
 | `.RemoveCol(colName)` | 列削除 |
 | `.RenameCol(old, new)` | 列名変更 |
+| `.Calc(col, op, value)` | 列のスカラー演算（value は数値 or 配列）|
+| `.CalcCols(result, col1, op, col2)` | 列間ベクトル演算 |
+
+### 演算メソッド
+
+演算子: `+`, `-`, `*`, `/`, `^`, `Mod`
+
+```vba
+' スカラー演算: Price列を1.1倍
+df.Calc("Price", "*", 1.1).Print
+
+' スカラー演算: Tax列に100を加算
+df.Calc("Tax", "+", 100).Print
+
+' 配列との要素ごと演算
+df.Calc("Price", "*", Array(1.0, 1.1, 1.2)).Print
+
+' 列間演算: Price * Qty → 新しい列 Total を追加
+df.CalcCols("Total", "Price", "*", "Qty").Print
+
+' 列間演算: 既存列を上書き
+df.CalcCols("Price", "Price", "+", "Tax").Print
+
+' チェーン例: 税込価格を計算してソート
+df.Calc("Price", "*", 1.1) _
+  .CalcCols("Total", "Price", "*", "Qty") _
+  .OrderBy("Total", Ascending:=False) _
+  .Print
+```
 
 ## 集計
 
